@@ -1,6 +1,6 @@
 {
     "name": "DSPConsole",
-    "version_number": "1.0.2",
+    "version_number": "1.0.3",
     "website_url": "https://github.com/tph85666031/DSPConsole",
     "description": "DSP Console extention,修改物品堆叠倍率,修改研究速度倍率，修改元数据统计倍率为按小时产量统计,Set storage stack size ratio, Set research speed ratio,Set MetaData ratio",
     "dependencies": []
