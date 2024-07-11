@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DSPConsole
 {
-    [BepInPlugin("com.wisper.dsp.console", "DSP Console extention", "1.0.7")]
+    [BepInPlugin("com.wisper.dsp.console", "DSP Console extention", "1.0.9")]
     public class DSPConsole : BaseUnityPlugin
     {
         private static ConfigEntry<bool> config_easy_start;
@@ -85,9 +85,33 @@ namespace DSPConsole
                 UnlockTechByID(2501);//能量回路Lv1
                 UnlockTechByID(4104);//宇宙探索Max
                 UnlockTechByID(2902);//驱动引擎Lv2
-                //UnlockTechByID(1606);//解锁吸尘器
+
+                if (GameMain.mainPlayer.package.GetItemCount(1004) > 0)
+                {
+                    UnlockTechByID(1604);//行星物流
+                    UnlockTechByID(1703);//粒子磁力阱
+                    UnlockTechByID(1413);//钛矿冶炼
+                    UnlockTechByID(1302);//处理器
+                    GameMain.mainPlayer.TryAddItemToPackage(2103, 40, 0, false);//行星物流运输站
+                    GameMain.mainPlayer.TryAddItemToPackage(5001, 400, 0, false);//物流运输机
+                    GameMain.mainPlayer.TryAddItemToPackage(2105, 40, 0, false);//轨道采集器
+
+                    if (GameMain.mainPlayer.package.GetItemCount(1004) == 99)
+                    {
+                        UnlockTechByID(3803);//运输站集装物流Max
+                        UnlockTechAllExcepetWhiteMtrix();
+                        GameMain.mainPlayer.TryAddItemToPackage(2104, 40, 0, false);//星际物流运输站
+                        GameMain.mainPlayer.TryAddItemToPackage(5002, 40, 0, false);//星际物流运输船
+                        GameMain.mainPlayer.TryAddItemToPackage(2316, 10, 0, false);//光子聚束采矿
+                        GameMain.mainPlayer.TryAddItemToPackage(2003, 4000, 0, false);//急速传送带
+                        GameMain.mainPlayer.TryAddItemToPackage(2013, 1000, 0, false);//极速分拣器
+                        GameMain.mainPlayer.TryAddItemToPackage(2014, 200, 0, false);//集装分拣器
+                        GameMain.mainPlayer.TryAddItemToPackage(6005, 10, 0, false);//绿糖
+                    }
+                }
             }
         }
+
 
         //研究速率
         [HarmonyPostfix]
@@ -111,7 +135,11 @@ namespace DSPConsole
             for (int index = 0; index < data_array.Length; ++index)
             {
                 data_array[index].StackSize *= config_pile_ratio.Value;
-                Debug.Log(String.Format("set {0} size to {1}", data_array[index].ID, data_array[index].StackSize));
+                if (ItemProto.isFluid(data_array[index].ID))
+                {
+                    data_array[index].StackSize *= 10;
+                }
+                Debug.Log(String.Format("set {0}:{1} size to {2}", data_array[index].ID, data_array[index].name, data_array[index].StackSize));
                 StorageComponent.itemStackCount[data_array[index].ID] = data_array[index].StackSize;
             }
             pile_set_done = true;
@@ -172,10 +200,38 @@ namespace DSPConsole
             return false;
         }
 
+        public static void UnlockTechAll()
+        {
+            foreach (TechProto techProto in LDB.techs.dataArray)
+            {
+                UnlockTechByID(techProto.ID);
+            }
+        }
+        public static void UnlockTechAllExcepetWhiteMtrix()
+        {
+            foreach (TechProto techProto in LDB.techs.dataArray)
+            {
+                bool white_matrix_needed = false;
+                foreach (IDCNT item in techProto.unlockNeedItemArray)
+                {
+                    if (item.count > 0 && item.id == 6006)
+                    {
+                        white_matrix_needed = true;
+                        break;
+                    }
+                }
+                if (white_matrix_needed)
+                {
+                    continue;
+                }
+                UnlockTechByID(techProto.ID);
+            }
+        }
+
         public static bool UnlockTechByID(int techId)
         {
             TechProto techProto = LDB.techs.Select(techId);
-            if (techProto == null)
+            if (techProto == null || techProto.IsHiddenTech || techProto.IsObsolete)
             {
                 return false;
             }
