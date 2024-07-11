@@ -1,7 +1,7 @@
 {
     "name": "DSPConsole",
-    "version_number": "1.0.3",
+    "version_number": "1.0.9",
     "website_url": "https://github.com/tph85666031/DSPConsole",
-    "description": "DSP Console extention,修改物品堆叠倍率,修改研究速度倍率，修改元数据统计倍率为按小时产量统计,Set storage stack size ratio, Set research speed ratio,Set MetaData ratio",
+    "description": "DSP Console extention,修改物品堆叠倍率,修改研究速度倍率，修改元数据统计倍率，允许成就上传，屏蔽异常检测，解锁初期科技快速开局，Set storage stack size ratio, Set research speed ratio,Set MetaData ratio,Enable achievement,Disable abnormal check，Unlock required techs for easy startup",
     "dependencies": []
 }
